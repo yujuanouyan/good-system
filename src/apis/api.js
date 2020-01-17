@@ -56,6 +56,22 @@ const editGoodsReserve = params => {
   })
 }
 
+const goodsLower = params => {
+  return fetch({
+    url: '/controller/shopadmincontroller/updategoodsexaminestatebyidlist',
+    method: 'post',
+    data: params
+  })
+}
+
+const goodsUpper = params => {
+  return fetch({
+    url: '/controller/shopadmincontroller/updategoodsexaminestatebtoup',
+    method: 'post',
+    data: params
+  })
+}
+
 const addShopAuthentication = params => {
   return fetch({
     url: '/controller/shopadmincontroller/addshopadminmxamine',
@@ -80,6 +96,14 @@ const editShopAuthentication = params => {
   })
 }
 
+const shopTypeList = params => {
+  return fetch({
+    url: '/controller/shopadmincontroller/getshoptypelist',
+    method: 'post',
+    data: params
+  })
+}
+
 export const apiList = {
   goodList,
   goodCategory,
@@ -87,8 +111,11 @@ export const apiList = {
   editGoods,
   deleteGoods,
   detailGoods,
+  goodsLower,
+  goodsUpper,
   addShopAuthentication,
   auditShopAuthentication,
   editShopAuthentication,
-  editGoodsReserve
+  editGoodsReserve,
+  shopTypeList
 }

@@ -7,7 +7,8 @@ import Qs from 'qs'
 // create an axios instance
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  baseURL: 'http://www.zhongjubang.com/test',
+  // baseURL: 'http://www.zhongjubang.com/test',
+  baseURL: 'http://www.zhongjubang.com/api',
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })

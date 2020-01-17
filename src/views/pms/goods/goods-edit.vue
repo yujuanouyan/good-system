@@ -14,7 +14,6 @@
         </el-col>
         <el-col :span="7">
           <el-form-item label="商品分类" prop="goodsTypeId">
-            <!-- <el-input v-model="formData.goodsName" /> -->
             <el-select v-model="formData.goodsTypeId" placeholder="请选择" @focus="choseCategory">
               <el-option v-for="item in categoryItem" :key="item.id" :label="item.goodsType" :value="item.id" />
             </el-select>
@@ -91,7 +90,7 @@
       </el-row>
       <el-row>
         <el-col>
-          <el-form-item label="服务承诺：" prop="goodsShow">
+          <el-form-item label="服务承诺：" prop="tag">
             <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
             <div style="margin: 15px 0;" />
             <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
@@ -137,7 +136,15 @@ export default {
         goodsSpecificationsList: [{ index: 1 }]
       },
       supplierItemIndex: 1,
-      formRule: {},
+      formRule: {
+		  goodsName: [{ required: true, message: '请输入商品标题', trigger: 'blur' }],
+		//   tag: [{ type: 'array', required: true, message: '请至少选择一个服务承诺', trigger: 'change' }],
+		  goodsTypeId: [{ required: true, message: '请选择商品分类', trigger: 'change' }],
+		  goodsShow: [{ required: true, message: '请输入商品说明', trigger: 'blur' }],
+		//   specifications: [{ required: true, message: '请输入商品规格', trigger: 'blur' }],
+		//   reserve: [{ required: true, message: '请输入商品库存', trigger: 'blur' }],
+		//   price: [{ required: true, message: '请输入商品价格', trigger: 'blur' }]
+      },
       dialogImageUrl: '',
       dialogVisible: false,
       fileList: [],
@@ -156,7 +163,8 @@ export default {
     const id = this.$route.query.id
     if (id) {
       this.queryId = id
-      this.fetchData(id)
+      this.fetchData(id);
+      this.choseCategory();
     }
   },
   methods: {
@@ -232,27 +240,38 @@ export default {
     handleExceed() {},
     // 提交
     submitForm(name) {
-      const parmas = this.formData
-      parmas.topImgList = this.fileList
-      parmas.goodsContent = this.detailFileList
-      parmas.tag = this.checkedCities
-      parmas.shopId = this.user.shopId
-      // let data = JSON.stringify(parmas)
-      // console.log(data)
-      if (this.queryId) {
-        parmas.goodsExaminId = this.queryId
-        this.$api.editGoods({ content: JSON.stringify(parmas) }).then(res => {
-          if (res.code == 200) {
-            this.$router.replace('/pms/goods/list')
-          }
-        })
-      } else {
-        this.$api.saveGoods({ content: JSON.stringify(parmas) }).then(res => {
-          if (res.code == 200) {
-            this.$router.replace('/pms/goods/list')
-          }
-        })
-      }
+		this.$refs["formData"].validate((valid) => {
+			if (valid) {
+				const parmas = this.formData;
+				parmas.topImgList = this.fileList;
+				parmas.goodsContent = this.detailFileList;
+				parmas.tag = this.checkedCities;
+				parmas.shopId = this.user.shopId;
+				if(this.fileList.length == 0) {
+					this.$message.warning('请上传商品轮播图');
+					return
+				}
+				if(this.fileList.detailFileList == 0) {
+					this.$message.warning('请上传商品详情图');
+					return
+				}
+				if (this.queryId) {
+					parmas.goodsExaminId = this.queryId;
+					this.$api.editGoods({ content: JSON.stringify(parmas) }).then(res => {
+					if (res.code == 200) {
+						this.$router.replace('/pms/goods/list')
+					}
+					})
+				} else {
+					this.$api.saveGoods({ content: JSON.stringify(parmas) }).then(res => {
+					if (res.code == 200) {
+						this.$router.replace('/pms/goods/list')
+					}
+					})
+				}
+			}
+		 })
+      
     },
     // 商品详情
     fetchData(id) {

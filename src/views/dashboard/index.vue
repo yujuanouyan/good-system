@@ -1,6 +1,7 @@
 <template>
   <div class="dashboard-container">
-    <component :is="currentRole" />
+    <!-- <component :is="currentRole" /> -->
+    <div id="develop">开发中....</div>
   </div>
 </template>
 
@@ -29,3 +30,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  #develop {
+    text-align: center;
+    margin-top: 5%
+  }
+</style>

@@ -29,8 +29,13 @@
           </el-form-item>
         </el-col>
         <el-col :span="5">
-          <el-form-item label="店铺分类" prop="shopType">
+          <!-- <el-form-item label="店铺分类" prop="shopType">
             <el-input v-model="formData.shopType" />
+          </el-form-item> -->
+		   <el-form-item label="店铺分类" prop="shopType">
+				<el-select v-model="formData.shopType" placeholder="请选择" @focus="shopCategroy">
+				<el-option v-for="item in shopList" :key="item.id" :label="item.shopType" :value="item.id" />
+				</el-select>
           </el-form-item>
         </el-col>
       </el-row>
@@ -240,7 +245,16 @@ export default {
       formData: {
         shopNum: ''
       },
-      formRule: {},
+      formRule: {
+		  shopName: [{ required: true, message: '请输入	店铺名称', trigger: 'blur' }],
+		  spare1: [{ required: true, message: '请输入店铺的介绍', trigger: 'blur' }],
+		  settledEmail: [{ required: true, message: '请输入入驻邮箱', trigger: 'blur' }],
+		  settledName: [{ required: true, message: '请输入入驻姓名', trigger: 'blur' }],
+		  settledContact: [{ required: true, message: '请输入驻联系方式', trigger: 'blur' }],
+		  urgentContactName: [{ required: true, message: '请输入紧急联系人姓名', trigger: 'blur' }],
+		  urgentContactPhone: [{ required: true, message: '请输入紧急联系手机', trigger: 'blur' }],
+		  contactAddress: [{ required: true, message: '请输入联系地址', trigger: 'blur' }]
+      },
       dialogImageUrl: '',
       dialogVisible: false,
       user: {},
@@ -252,7 +266,8 @@ export default {
       spare3: [],
       spare2: [],
       shopLogo: [],
-      audit_satus: ''
+	  audit_satus: '',
+	  shopList: []
     }
   },
   mounted() {
@@ -261,11 +276,26 @@ export default {
     const num = this.user.shopNum
     if (this.user.shopNum) {
       // this.queryId = id;
-      this.fetchData(num)
+	  this.fetchData(num);
+	  this.shopCategroy();
+    } else {
+      this.logout();
     }
   },
   methods: {
-
+    // 店铺分类
+    shopCategroy() {
+        this.$api.shopTypeList().then((res) => {
+			if(res.code == 200) {
+				this.shopList = res.data;
+			}
+        })
+    },
+    async logout() {
+      await this.$store.dispatch('user/logout')
+      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      // this.$router.push('/login')
+    },
     handlePreview() {
 
     },
@@ -359,47 +389,35 @@ export default {
     handleExceed() {},
     // 提交
     submitForm(name) {
-      // let parmas = {
-      //     shopNum: this.formData.shopNum,
-      //     shopName: this.formData.shopName,
-      //     shopType: this.formData.shopType,
-      //     shopLogo: JSON.stringify(this.formData.shopLogo),
-      //     spare1: this.formData.spare1,
-      //     spare2: JSON.stringify(this.formData.spare2),
-      //     spare3: JSON.stringify(this.formData.spare3),
-      //     settledEmail: this.formData.settledEmail,
-      //     settledName: this.formData.settledName,
-      //     idJust: JSON.stringify(this.formData.idJust),
-      //     idBack: JSON.stringify(this.formData.idBack) ,
-      //     settledContact: this.formData.settledContact,
-      //     urgentContactName: this.formData.urgentContactName,
-      //     urgentContactPhone: this.formData.urgentContactPhone,
-      //     contactAddress: this.formData.contactAddress,
-      //     businessLicense: JSON.stringify(this.formData.uploadSuccessLicense)
-      // }
-      const parmas = this.formData
-      parmas.businessLicense = JSON.stringify(this.businessLicense)
-      parmas.idBack = JSON.stringify(this.idBack)
-      parmas.idJust = JSON.stringify(this.idJust)
-      parmas.spare3 = JSON.stringify(this.spare3)
-      parmas.spare2 = JSON.stringify(this.spare2)
-      parmas.shopLogo = JSON.stringify(this.shopLogo)
-      if (this.audit_satus == '') {
-        this.$api.addShopAuthentication(parmas).then(res => {
-          console.log(res)
-          if (res.code == 200) {
-            this.audit_adopt = false
-          }
-        })
-      } else {
-        this.$api.editShopAuthentication(parmas).then(res => {
-          console.log(res)
-          if (res.code == 200) {
-            this.audit_adopt = false
-            this.audit_satus = 0
-          }
-        })
-      }
+		this.$refs["formData"].validate((valid) => {
+			if(valid) {
+				const parmas = this.formData
+				parmas.businessLicense = JSON.stringify(this.businessLicense)
+				parmas.idBack = JSON.stringify(this.idBack)
+				parmas.idJust = JSON.stringify(this.idJust)
+				parmas.spare3 = JSON.stringify(this.spare3)
+				parmas.spare2 = JSON.stringify(this.spare2)
+				parmas.shopLogo = JSON.stringify(this.shopLogo)
+				if (this.audit_satus == '') {
+					this.$api.addShopAuthentication(parmas).then(res => {
+					this.$message.success('提交成功');
+					if (res.code == 200) {
+						this.audit_adopt = false;
+						this.audit_satus = 0
+					}
+					})
+				} else {
+					this.$api.editShopAuthentication(parmas).then(res => {
+					if (res.code == 200) {
+						this.$message.success('提交成功');
+						this.audit_adopt = false
+						this.audit_satus = 0
+					}
+					})
+				}
+			}
+		})
+      
     },
     // 商品详情
     fetchData(num) {

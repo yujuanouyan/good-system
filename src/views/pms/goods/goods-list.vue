@@ -1,65 +1,65 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <div class="demo-input-size">
-        <el-input v-model="goodsExamineId" placeholder="商品编码" clearable class="elInput" @keyup.enter.native="handleClick" @clear="clearInput(goodsExamineId)" />
-        <el-input v-model="goodsName" placeholder="商品名称" clearable class="elInput" @keyup.enter.native="handleClick" @clear="clearInput(goodsName)" />
-        <el-select v-model="state" placeholder="请选择" @change="changeSate">
-          <el-option v-for="item in stateItem" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-        <el-button style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleClick">搜索</el-button>
-      </div>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="addGoods">添加商品</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="addGoods">上架</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="goodsLowerShelf">下架</el-button>
-      <!--渲染数据 start-->
-      <el-table v-loading="loading" :data="tableData" border style="width: 100%" class="taba" @selection-change="handleSelectionChange">>
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="goodsExamineId" label="商品编码" />
+		<div class="demo-input-size">
+			<el-input v-model="goodsExamineId" placeholder="商品编码" clearable class="elInput" @keyup.enter.native="handleClick" @clear="clearInput(goodsExamineId)" />
+			<el-input v-model="goodsName" placeholder="商品名称" clearable class="elInput" @keyup.enter.native="handleClick" @clear="clearInput(goodsName)" />
+			<el-select v-model="state" placeholder="请选择" @change="changeSate">
+			<el-option v-for="item in stateItem" :key="item.value" :label="item.label" :value="item.value" />
+			</el-select>
+			<el-button style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleClick">搜索</el-button>
+		</div>
+		<el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="addGoods">添加商品</el-button>
+		<el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="goodsUpperShelf">上架</el-button>
+		<el-button class="filter-item" style="margin-left: 10px;" type="primary" @click="goodsLowerShelf">下架</el-button>
+		<!--渲染数据 start-->
+		<el-table v-loading="loading" :data="tableData" border style="width: 100%" class="taba" @selection-change="handleSelectionChange">>
+			<el-table-column type="selection" width="55" />
+			<el-table-column prop="goodsExamineId" label="商品编码" />
 
-        <el-table-column prop="goodsName" label="商品名称">
-          <template slot-scope="{row}">
-            <el-button type="text" @click="detail(row)">{{ row.goodsName }}</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="specifications" label="商品规格" />
-        <el-table-column prop="price" label="商品价格(元)">
-          <template slot-scope="{row}">
-            <el-button v-if="row.state == 0" class="no-click">{{ row.price }}</el-button>
-            <el-button v-else type="text" @click="editReserve(row, 'price')">{{ row.price }}</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="reserve" label="商品库存(件)">
-          <template slot-scope="{row}">
-            <el-button v-if="row.state == 0" class="no-click">{{ row.reserve }}</el-button>
-            <el-button v-else type="text" @click="editReserve(row, 'reserve')">{{ row.reserve }}</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="state" label="审核状态" :formatter="auditStatue" />
-        <el-table-column prop="topImgList" label="商品轮播">
-          <template slot-scope="{row}">
-            <div v-for="(item, index) in JSON.parse(row.topImgList)" v-show="index < 1" :key="index" class="demo-image__preview" @click="preveImage(row.topImgList)">
-              <el-image
-                v-if="!showViewer"
-                style="width: 100px; height: 100px"
-                :src="item.url"
-              />
+			<el-table-column prop="goodsName" label="商品名称"  :show-overflow-tooltip="true">
+			<template slot-scope="{row}">
+				<el-button type="text" @click="detail(row)">{{ row.goodsName | ellipsis }}</el-button>
+			</template>
+			</el-table-column>
+			<el-table-column prop="specifications" label="商品规格" />
+			<el-table-column prop="price" label="商品价格(元)">
+			<template slot-scope="{row}">
+				<el-button v-if="row.state == 0" class="no-click">{{ row.price }}</el-button>
+				<el-button v-else type="text" @click="editReserve(row, 'price')">{{ row.price }}</el-button>
+			</template>
+			</el-table-column>
+			<el-table-column prop="reserve" label="商品库存(件)">
+			<template slot-scope="{row}">
+				<el-button v-if="row.state == 0" class="no-click">{{ row.reserve }}</el-button>
+				<el-button v-else type="text" @click="editReserve(row, 'reserve')">{{ row.reserve }}</el-button>
+			</template>
+			</el-table-column>
+			<el-table-column prop="state" label="审核状态" :formatter="auditStatue" />
+			<el-table-column prop="topImgList" label="商品轮播">
+			<template slot-scope="{row}">
+				<div v-for="(item, index) in JSON.parse(row.topImgList)" v-show="index < 1" :key="index" class="demo-image__preview" @click="preveImage(row.topImgList)">
+				<el-image
+					v-if="!showViewer"
+					style="width: 100px; height: 100px"
+					:src="item.url"
+				/>
 
-            </div>
-            <el-image-viewer
-              v-show="showViewer"
-              :on-close="closeViewer"
-              :url-list="srcList"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" width="240" class-name="small-padding fixed-width">
-          <template slot-scope="{row}">
-            <el-button size="mini" type="primary" icon="el-icon-edit" @click="edit_goods(row)">编辑</el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" @click="del_goods(row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+				</div>
+				<el-image-viewer
+				v-show="showViewer"
+				:on-close="closeViewer"
+				:url-list="srcList"
+				/>
+			</template>
+			</el-table-column>
+			<el-table-column label="操作" align="center" width="240" class-name="small-padding fixed-width">
+			<template slot-scope="{row}">
+				<el-button size="mini" type="primary" icon="el-icon-edit" @click="edit_goods(row)">编辑</el-button>
+				<el-button size="mini" type="danger" icon="el-icon-delete" @click="del_goods(row)">删除</el-button>
+			</template>
+			</el-table-column>
+		</el-table>
       <!--渲染数据 end-->
       <!--分页 start-->
       <div class="block">
@@ -108,17 +108,20 @@
                           <span>商品分类</span>
                         </div>
                       </td>
-                      <td colspan="2">
+                      <td colspan="3">
                         <div class="el-table-cell">
-                          <span>{{ this.goodsDetailData.goodsTypeId }}</span>
+                          <span>{{ this.goodsDetailData.goodsType }}</span>
                         </div>
                       </td>
+					 
+                    </tr>
+					 <tr class="el-table-row">
                       <td class="head-bg">
                         <div class="el-table-cell">
                           <span>商品标题</span>
                         </div>
                       </td>
-                      <td colspan="2">
+                      <td colspan="3">
                         <div class="el-table-cell">
                           <span>{{ this.goodsDetailData.goodsName }}</span>
                         </div>
@@ -131,7 +134,7 @@
                           <span>商品服务</span>
                         </div>
                       </td>
-                      <td colspan="5">
+                      <td colspan="3">
                         <div class="el-table-cell">
                           <span>{{ this.goodsDetailData.tag }}</span>
                         </div>
@@ -144,53 +147,59 @@
                           <span>商品说明</span>
                         </div>
                       </td>
-                      <td colspan="5">
+                      <td colspan="3">
                         <div class="el-table-cell">
                           <span>{{ this.goodsDetailData.goodsShow }}</span>
                         </div>
                       </td>
                     </tr>
                     <tr class="el-table-row">
-                      <td class="head-bg">
+						
+						<td class="head-bg">
                         <div class="el-table-cell">
                           <span>商品规格</span>
                         </div>
                       </td>
-                      <td>
-                        <div class="el-table-cell">
-                          <span>2222</span>
-                        </div>
-                      </td>
-                      <td class="head-bg">
+					  <td class="head-bg"  >
                         <div class="el-table-cell">
                           <span>商品库存</span>
                         </div>
                       </td>
-                      <td>
-                        <div class="el-table-cell">
-                          <span>3333</span>
-                        </div>
-                      </td>
-                      <td class="head-bg">
+					  <td class="head-bg" colspan="2">
                         <div class="el-table-cell">
                           <span>商品价格</span>
                         </div>
                       </td>
-                      <td>
-                        <div class="el-table-cell">
-                          <span>1111</span>
-                        </div>
-                      </td>
                     </tr>
+					<tr class="el-table-row" v-for="(item, index) in this.specificData" :key="index">
+						<td>
+							<div class="el-table-cell">
+								<span>{{item.specifications}}</span>
+								<!-- <span>{{this.specificData}}</span> -->
+							</div>
+						</td>
+						<td >
+							<div class="el-table-cell">
+								<span>{{item.reserve}}</span>
+							</div>
+						</td>
+						<td colspan="2">
+							<div class="el-table-cell">
+								<span>{{item.price}}</span>
+							</div>
+						</td>
+					</tr>
                     <tr class="el-table-row">
                       <td class="head-bg">
                         <div class="el-table-cell">
                           <span>商品轮播</span>
                         </div>
                       </td>
-                      <td colspan="5">
+                      <td colspan="3">
                         <div class="el-table-cell">
-                          <span>1111</span>
+							<a :href="item.url"  v-for="(item, index) in this.bannerImg" :key="index" target="_blank">
+                          		<img :src="item.url" alt="" class="bannerImg">
+							</a>
                         </div>
                       </td>
                     </tr>
@@ -200,9 +209,11 @@
                           <span>商品详情图</span>
                         </div>
                       </td>
-                      <td colspan="5">
+                      <td colspan="3">
                         <div class="el-table-cell">
-                          <span>1111</span>
+						  	<a :href="item.url"  v-for="(item, index) in this.detailImg" :key="index" target="_blank">
+                          		<img :src="item.url" alt="" class="bannerImg">
+							</a>
                         </div>
                       </td>
                     </tr>
@@ -259,7 +270,19 @@ export default {
       good_price: '',
       dialogTitle: '',
       dialogDetailVisible: false,
-      goodsDetailData: []
+	  goodsDetailData: [],
+	  specificData: [],
+	  bannerImg: [],
+	  detailImg: []
+    }
+  },
+  filters: {
+    ellipsis(value) {
+      if (!value) return "";
+      if (value.length > 15) {
+        return value.slice(0, 15) + "...";
+      }
+      return value;
     }
   },
   created() {
@@ -293,9 +316,8 @@ export default {
       }
       this.loading = true
       this.$api.goodList(parmas).then(res => {
-        // console.log(res)
-        if (res.code === 200) {
-          const data = res.data.dataList
+        if (res.code == 200) {
+		  const data = res.data.dataList;
           this.tableData = data
           this.pageTotal = res.data.pageSize * res.data.totalPage
         }
@@ -317,7 +339,7 @@ export default {
           return '审核中'
           break
         case 1:
-          return '审核通过'
+          return '已上架'
           break
         case 2:
           return '审核失败'
@@ -410,29 +432,74 @@ export default {
           this.$message.error('请检查该商品是否已售罄')
           return false
         }
-        this.goodsShelf()
+        this.goodsShelf('lower')
       })
       // return
-    },
-    goodsShelf() {
-      this.$confirm('确定商品下架吗, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // this.$api.deleteGoods({ids: row.goodsSpecificationsExamineId})
-        // .then(res => {
-        //     if (res.code == 200) {
-        //         this.$message.success('删除成功')
-        //         this.pageIndex = 1
-        //         this.getInfo()
-        //         this.currentPage2 = 1
-        //     } else {
-        //         this.$message.error('删除失败')
-        //     }
-        //     // if(res.data.data.)
-        // })
-      }).catch(() => {})
+	},
+	goodsUpperShelf() {
+		if (this.itemIds.length == 0) {
+			this.$message.warning('请选择需要上架的商品')
+			return
+		}
+      this.itemStatus.forEach((item, index) => {
+        if (item == 0) {
+          this.$message.error('请检查该商品是否审核通过')
+          return false
+        }
+        if (item == 2) {
+          this.$message.error('该商品审核失败，不能进行上架')
+          return false
+        }
+        if (item == 4) {
+          this.$message.error('请检查该商品是否已售罄')
+          return false
+        }
+        this.goodsShelf('upper')
+      })
+	},
+    goodsShelf(type) {
+		if(type == 'lower') {
+			this.$confirm('确定商品下架吗, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				// let parmas = JSON.stringify(this.itemIds)
+				this.$api.goodsLower({ids: this.itemIds.toString()})
+				.then(res => {
+				    if (res.code == 200) {
+				        this.$message.success('下架成功')
+				        this.pageIndex = 1
+				        this.getInfo()
+				        this.currentPage2 = 1
+				    } else {
+				        this.$message.error('下架失败')
+				    }
+				    // if(res.data.data.)
+				})
+			}).catch(() => {})
+		} else {
+			this.$confirm('确定商品上架吗, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				// let parmas = JSON.stringify(this.itemIds)
+				this.$api.goodsUpper({ids: this.itemIds.toString()})
+				.then(res => {
+				    if (res.code == 200) {
+				        this.$message.success('上架成功')
+				        this.pageIndex = 1
+				        this.getInfo()
+				        this.currentPage2 = 1
+				    } else {
+				        this.$message.error('上架失败')
+				    }
+				    // if(res.data.data.)
+				})
+			}).catch(() => {})
+		}
+      
     },
     editReserve(row, type) {
       this.dialogFormVisible = true
@@ -465,7 +532,10 @@ export default {
       this.dialogDetailVisible = true
       this.$api.detailGoods({ goodsExaminId: row.goodsExamineId }).then(res => {
         if (res.code == 200) {
-          this.goodsDetailData = res.data
+		  this.goodsDetailData = res.data
+		  this.specificData = res.data.goodsSpecificationsList;
+		  this.bannerImg = JSON.parse(res.data.topImgList) ;
+		  this.detailImg =  JSON.parse(res.data.goodsContent);
           // this.formData = res.data;
           // // this.formData.goodsSpecificationsList = res.data.GoodsSpecificationsExamineList;
           // this.checkedCities =  JSON.parse(res.data.tag);
@@ -511,4 +581,9 @@ export default {
     .head-bg {
         background: #f5f7fa;
     }
+	.bannerImg {
+		width: 100px;
+		height: 100px;
+		display: inline-block;
+	}
 </style>
