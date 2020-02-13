@@ -243,7 +243,8 @@ export default {
   data() {
     return {
       formData: {
-        shopNum: ''
+        shopNum: '',
+        shopId: ''
       },
       formRule: {
 		  shopName: [{ required: true, message: '请输入	店铺名称', trigger: 'blur' }],
@@ -272,7 +273,8 @@ export default {
   },
   mounted() {
     this.user = local.get('hou')
-    this.formData.shopNum = this.user.shopNum
+    this.formData.shopNum = this.user.shopNum;
+    this.formData.shopId = this.user.shopId;
     const num = this.user.shopNum
     if (this.user.shopNum) {
       // this.queryId = id;

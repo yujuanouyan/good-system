@@ -6,17 +6,17 @@
 import Cookies from 'js-cookie'
 
 const environmentVariables = process.env.NODE_ENV
-let baseURL = 'http://www.zhongjubang.com/api'
-// let baseURL = 'http://www.zhongjubang.com/test'
-// if (environmentVariables === 'production') {
-//   console.log('---- production ----')
-// } else if (environmentVariables === 'test') {
-//   baseURL = 'http://www.zhongjubang.com/test'
-//   console.log('---- test ----')
-// } else {
-//   baseURL = 'http://www.zhongjubang.com/test'
-//   console.log('---- develop ----')
-// }
+// let baseURL = 'http://www.zhongjubang.com/api'
+let baseURL = 'http://www.zhongjubang.com/test'
+if (environmentVariables === 'production') {
+  console.log('---- production ----')
+} else if (environmentVariables === 'test') {
+  baseURL = 'http://www.zhongjubang.com/test'
+  console.log('---- test ----')
+} else {
+  baseURL = 'http://www.zhongjubang.com/test'
+  console.log('---- develop ----')
+}
 
 export const SERVER_BASE_URL = baseURL
 export const JsCookies = Cookies

@@ -136,7 +136,7 @@
                       </td>
                       <td colspan="3">
                         <div class="el-table-cell">
-                          <span>{{ this.goodsDetailData.tag }}</span>
+                          <span v-for="(t, index) in  this.goodsDetailData.tag" :key="'tag'+index">{{ t.contents + ' , ' }}</span>
                         </div>
                       </td>
 
@@ -532,7 +532,8 @@ export default {
       this.dialogDetailVisible = true
       this.$api.detailGoods({ goodsExaminId: row.goodsExamineId }).then(res => {
         if (res.code == 200) {
-		  this.goodsDetailData = res.data
+      this.goodsDetailData = res.data;
+      this.goodsDetailData.tag = JSON.parse(res.data.tag);
 		  this.specificData = res.data.goodsSpecificationsList;
 		  this.bannerImg = JSON.parse(res.data.topImgList) ;
 		  this.detailImg =  JSON.parse(res.data.goodsContent);
